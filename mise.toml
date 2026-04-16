@@ -1,0 +1,33 @@
+[env]
+TEMPLATE_MAIN = "template/main.typ"
+TEMPLATE_OUT = "build/template/main.pdf"
+DISCORD_BOT_MAIN = "discord-bot/discord-bot.typ"
+DISCORD_BOT_OUT = "build/discord-bot/discord-bot.pdf"
+
+[tasks.build]
+description = "Compile the reusable template deck"
+run = "mkdir -p build/template && typst compile --root . template/main.typ build/template/main.pdf"
+
+[tasks.watch]
+description = "Watch and compile the reusable template deck"
+run = "mkdir -p build/template && typst watch --root . template/main.typ build/template/main.pdf"
+
+[tasks.template]
+description = "Compile the reusable template deck"
+run = "mkdir -p build/template && typst compile --root . template/main.typ build/template/main.pdf"
+
+[tasks.template-minimal]
+description = "Compile the minimal sample deck (fewer slides)"
+run = "mkdir -p build/template && typst compile --root . template/main-minimal.typ build/template/main-minimal.pdf"
+
+[tasks.discord-bot]
+description = "Compile the Discord Bot workshop deck"
+run = "mkdir -p build/discord-bot && typst compile --root . discord-bot/discord-bot.typ build/discord-bot/discord-bot.pdf"
+
+[tasks.check]
+description = "Compile all decks that should stay healthy"
+depends = ["template", "template-minimal", "discord-bot"]
+
+[tasks.clean]
+description = "Remove generated PDFs"
+run = "rm -rf build"

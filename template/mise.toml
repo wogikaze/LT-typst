@@ -1,0 +1,15 @@
+[env]
+MAIN = "main.typ"
+OUT = "build/main.pdf"
+
+[tasks.build]
+description = "Compile this Typst slide deck"
+run = "mkdir -p build && typst compile --root . main.typ build/main.pdf"
+
+[tasks.watch]
+description = "Watch and compile this Typst slide deck"
+run = "mkdir -p build && typst watch --root . main.typ build/main.pdf"
+
+[tasks.clean]
+description = "Remove generated PDFs"
+run = "rm -rf build"

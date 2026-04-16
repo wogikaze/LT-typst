@@ -1,0 +1,16 @@
+{
+  "target_file": "examples/main.typ",
+  "slide_range": "",
+  "goal": "",
+  "layout_pattern": "",
+  "style_reference": "docs/style-guide.md",
+  "allowed_changes": [
+    "slide text",
+    "layout functions",
+    "local assets"
+  ],
+  "validation": [
+    "mise run build"
+  ],
+  "notes": ""
+}

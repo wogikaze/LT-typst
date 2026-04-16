@@ -1,0 +1,11 @@
+[package]
+name = "typst-workshop-slides"
+version = "0.1.0"
+entrypoint = "main.typ"
+authors = ["wogikaze"]
+license = "MIT"
+description = "Touying + Metropolis based Typst workshop slide template"
+
+[template]
+path = "."
+entrypoint = "main.typ"

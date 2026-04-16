@@ -1,0 +1,4 @@
+build/
+*.pdf
+*.log
+.mise.local.toml

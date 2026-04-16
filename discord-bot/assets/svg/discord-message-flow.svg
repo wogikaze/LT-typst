@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 200" width="980" height="200">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 0, 8 4, 0 8" fill="#B89B4F"/>
+    </marker>
+  </defs>
+  <style>
+    .box { fill: #EFEEEC; stroke: #C8C8C5; stroke-width: 1.2; }
+    .box-bot { fill: #DEDBE8; stroke: #2C2A4A; stroke-width: 1.4; }
+    .lbl { font-family: "Noto Sans CJK JP", "Hiragino Sans", sans-serif; font-size: 14px; fill: #2B2F3A; font-weight: 600; }
+    .sub { font-family: "Noto Sans CJK JP", "Hiragino Sans", sans-serif; font-size: 10.5px; fill: #5A6070; font-weight: 400; }
+    .edge { stroke: #B89B4F; stroke-width: 2; fill: none; marker-end: url(#arr); }
+    .edge-lbl { font-family: "Noto Sans CJK JP", "Hiragino Sans", sans-serif; font-size: 9px; fill: #5A6070; font-weight: 500; }
+  </style>
+
+  <rect class="box" x="12" y="58" width="118" height="68" rx="6"/>
+  <text class="lbl" x="71" y="88" text-anchor="middle">ユーザー</text>
+  <text class="sub" x="71" y="106" text-anchor="middle">メッセージ送信</text>
+
+  <line class="edge" x1="134" y1="92" x2="188" y2="92"/>
+  <text class="edge-lbl" x="161" y="80" text-anchor="middle">送信</text>
+
+  <rect class="box" x="198" y="58" width="118" height="68" rx="6"/>
+  <text class="lbl" x="257" y="88" text-anchor="middle">Discord</text>
+  <text class="sub" x="257" y="106" text-anchor="middle">ゲートウェイ</text>
+
+  <line class="edge" x1="320" y1="92" x2="374" y2="92"/>
+  <text class="edge-lbl" x="347" y="80" text-anchor="middle">イベント</text>
+
+  <rect class="box-bot" x="384" y="58" width="118" height="68" rx="6"/>
+  <text class="lbl" x="443" y="88" text-anchor="middle" fill="#2C2A4A">Bot</text>
+  <text class="sub" x="443" y="106" text-anchor="middle">処理・返信</text>
+
+  <line class="edge" x1="506" y1="92" x2="560" y2="92"/>
+  <text class="edge-lbl" x="533" y="80" text-anchor="middle">返信</text>
+
+  <rect class="box" x="570" y="58" width="118" height="68" rx="6"/>
+  <text class="lbl" x="629" y="88" text-anchor="middle">Discord</text>
+  <text class="sub" x="629" y="106" text-anchor="middle">チャンネルへ配信</text>
+
+  <line class="edge" x1="692" y1="92" x2="746" y2="92"/>
+  <text class="edge-lbl" x="719" y="80" text-anchor="middle">配信</text>
+
+  <rect class="box" x="756" y="58" width="118" height="68" rx="6"/>
+  <text class="lbl" x="815" y="88" text-anchor="middle">ユーザー</text>
+  <text class="sub" x="815" y="106" text-anchor="middle">画面に表示</text>
+</svg>

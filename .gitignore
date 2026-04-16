@@ -1,0 +1,14 @@
+build/
+dist/
+*.pdf
+*.log
+*.aux
+*.out
+
+# instant-grep index
+.ig/
+
+# local editor / tool state
+.mise.local.toml
+
+.codex
