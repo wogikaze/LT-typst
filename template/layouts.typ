@@ -89,9 +89,10 @@
 #let toc-pattern(
   title,
   items,
+  image: none,
   subtitle: [今回の講習会の内容],
-) = slide-frame(
-  card([目次], [
+) = {
+  let toc-content = card([目次], [
     #for (idx, item) in items.enumerate() [
       #let n = idx + 1
       #grid(
@@ -103,10 +104,20 @@
       )
       #if idx < items.len() - 1 [#v(space.sm)#divider()#v(space.sm)]
     ]
-  ]),
-  title: title,
-  subtitle: subtitle,
-)
+  ])
+
+  let body = if image == none {
+    toc-content
+  } else {
+    grid-cards((toc-content, image), cols: 2)
+  }
+
+  slide-frame(
+    body,
+    title: title,
+    subtitle: subtitle,
+  )
+}
 
 #let summary-pattern(
   title,
@@ -151,19 +162,21 @@
   title,
   text-title,
   items,
-  path,
+  image,
   reverse: false,
   subtitle: none,
   show-subtitle: true,
+  col-ratio: (1fr, 1fr),
 ) = {
-  let text-block = card(text-title, bullet-list(items), height: limits.card_height_lg, body-height: 96pt)
-  let image-block = image-card(
-    [Visual],
-    path,
-    [#caption([画像や図で説明を補助する。])],
-    height: auto,
-    card-height: limits.card_height_lg,
-  )
+  // テキスト側は固定高さを外して、箇条書きの量に応じて自然に伸縮させる
+  let text-block = card(text-title, bullet-list(items))
+  // 右側は画像パス文字列と任意コンテンツの両方を受け取り、固定高さでクリップしない
+  let visual = if type(image) == str {
+    image(image, width: 100%)
+  } else {
+    image
+  }
+  let image-block = card([], [#visual])
   let default-subtitle = if reverse {
     [画像を先に見せてから説明へつなげる。]
   } else {
@@ -177,16 +190,21 @@
     default-subtitle
   }
   slide-frame(
-    grid-cards(if reverse { (image-block, text-block) } else { (text-block, image-block) }, cols: 2),
+    grid(
+      columns: col-ratio,
+      column-gutter: space.lg,
+      align: top,
+      ..(if reverse { (image-block, text-block) } else { (text-block, image-block) }),
+    ),
     title: title,
     subtitle: resolved-subtitle,
   )
 }
 
-#let card-row-pattern(title, cards, cols: 3, subtitle: none, cell-height: none) = slide-frame(
-  grid-cards(cards, cols: cols, cell-height: if cell-height != none { cell-height } else if cols == 4 {
-    limits.card_height_sm
-  } else if cols == 2 { limits.card_height_lg } else { limits.card_height_md }),
+#let card-row-pattern(title, cards, cols: 3, subtitle: none, cell-height: auto) = slide-frame(
+  grid-cards(cards, cols: cols, cell-height: if cell-height == auto {
+    if cols == 4 { limits.card_height_sm } else if cols == 2 { limits.card_height_lg } else { limits.card_height_md }
+  } else { cell-height }),
   title: title,
   subtitle: subtitle,
 )
@@ -341,25 +359,27 @@
   title: title,
   subtitle: subtitle,
 )
-
-#let full-image-pattern(title, path, body: [画像を背景として敷き、上にタイトルと短い説明を重ねる。]) = block(
+#let full-image-pattern(title, bg, body: [画像を背景として敷き、上にタイトルと短い説明を重ねる。]) = block(
   width: 100%,
   height: 100%,
   breakable: false,
 )[
   #place(top + left, dx: -page-margin-x, dy: -page-margin-y)[
-    image(path, width: page-width, height: page-height, fit: "cover")
-  ]
-  #place(top + left, dx: -page-margin-x, dy: -page-margin-y)[
-    box(width: page-width, height: page-height, fill: limits.overlay_dark)
-  ]
-  #place(top + left, dx: -page-margin-x, dy: -page-margin-y)[
-    box(width: page-width, height: page-height, inset: (x: 64pt, y: 48pt))[
-    #headline(title, size: sizes.hero, fill: theme.text_on_dark)
-    #v(space.md)
-    #box(width: limits.text_max_width, fill: theme.bg.transparentize(8%), radius: radius, inset: panel-inset)[
-      #prose(body, size: sizes.subheading)
+    #box(width: page-width, height: page-height, clip: true)[
+      #set image(width: page-width, height: page-height, fit: "cover")
+      #bg
     ]
+  ]
+  #place(top + left, dx: -page-margin-x, dy: -page-margin-y)[
+    #box(width: page-width, height: page-height, fill: limits.overlay_dark)
+  ]
+  #place(top + left, dx: -page-margin-x, dy: -page-margin-y)[
+    #box(width: page-width, height: page-height, inset: (x: 64pt, y: 48pt))[
+      #headline(title, size: sizes.hero, fill: theme.text_on_dark)
+      #v(space.md)
+      #box(width: limits.text_max_width, fill: theme.bg.transparentize(8%), radius: radius, inset: panel-inset)[
+        #prose(body, size: sizes.subheading)
+      ]
     ]
   ]
 ]
@@ -494,16 +514,16 @@
   breakable: false,
 )[
   #place(top + left, dx: -page-margin-x, dy: -page-margin-y)[
-    box(
-    width: page-width,
-    height: page-height,
-    fill: theme.primary,
-    inset: (x: 64pt, y: 52pt),
-    align(center + horizon)[
-    #headline(title, size: sizes.hero, fill: theme.text_on_dark)
-    #v(space.md)
-    #text(font: fonts.body, size: sizes.subheading, fill: theme.text_on_dark, tracking: tracking.ja, body)
-    ],
+    #box(
+      width: page-width,
+      height: page-height,
+      fill: theme.primary,
+      inset: (x: 64pt, y: 52pt),
+      align(center + horizon)[
+        #headline(title, size: sizes.hero, fill: theme.text_on_dark)
+        #v(space.md)
+        #text(font: fonts.body, size: sizes.subheading, fill: theme.text_on_dark, tracking: tracking.ja, body)
+      ],
     )
   ]
 ]

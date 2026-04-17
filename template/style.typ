@@ -52,10 +52,10 @@
   section: 32pt,
   heading: 26pt,
   subheading: 20pt,
-  body: 17pt,
+  body: 24pt,
   caption: 13pt,
   small: 13pt,
-  code: 13pt,
+  code: 24pt,
 )
 
 #let leading = (
@@ -94,7 +94,7 @@
   body_lines: 3,
   title_chars_per_line: 16,
   body_chars: 60,
-  text_max_width: 60%,
+  text_max_width: 65%,
   card_title_height: 32pt,
   card_body_height: 78pt,
   card_height_sm: 108pt,

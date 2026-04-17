@@ -1,3 +1,9 @@
+[env]
+TEMPLATE_MAIN = "template/main.typ"
+TEMPLATE_OUT = "build/template/main.pdf"
+DISCORD_BOT_MAIN = "discord-bot/discord-bot.typ"
+DISCORD_BOT_OUT = "build/discord-bot/discord-bot.pdf"
+
 [tasks.build]
 description = "Build a Typst deck by directory name"
 usage = '''
@@ -20,3 +26,11 @@ fi
 mkdir -p "build/$TARGET"
 typst compile --root . "$SRC" "$OUT"
 '''
+
+[tasks.check]
+description = "Compile all decks that should stay healthy"
+depends = ["build"]
+
+[tasks.clean]
+description = "Remove generated PDFs"
+run = "rm -rf build"

@@ -418,14 +418,14 @@
   )
 ]
 
-#let image-frame(path, height: 120pt, fit: "cover", framed: true) = box(
+#let image-frame(image, height: 120pt, fit: "cover", framed: true) = box(
   width: 100%,
   height: height,
   fill: if framed { theme.surface } else { none },
   stroke: if framed { (paint: theme.border, thickness: 0.8pt) } else { none },
   radius: radius,
   clip: true,
-  image(path, width: 100%, height: height, fit: fit),
+  [#image]
 )
 
 #let image-card(
