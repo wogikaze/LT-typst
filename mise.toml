@@ -1,33 +1,22 @@
-[env]
-TEMPLATE_MAIN = "template/main.typ"
-TEMPLATE_OUT = "build/template/main.pdf"
-DISCORD_BOT_MAIN = "discord-bot/discord-bot.typ"
-DISCORD_BOT_OUT = "build/discord-bot/discord-bot.pdf"
-
 [tasks.build]
-description = "Compile the reusable template deck"
-run = "mkdir -p build/template && typst compile --root . template/main.typ build/template/main.pdf"
+description = "Build a Typst deck by directory name"
+usage = '''
+arg "<target>" help="Deck directory name"
+'''
+run = '''
+set -eu
 
-[tasks.watch]
-description = "Watch and compile the reusable template deck"
-run = "mkdir -p build/template && typst watch --root . template/main.typ build/template/main.pdf"
+TARGET="{{usage.target}}"
+TARGET="${TARGET%/}"
 
-[tasks.template]
-description = "Compile the reusable template deck"
-run = "mkdir -p build/template && typst compile --root . template/main.typ build/template/main.pdf"
+SRC="$TARGET/$TARGET.typ"
+OUT="build/$TARGET/$TARGET.pdf"
 
-[tasks.template-minimal]
-description = "Compile the minimal sample deck (fewer slides)"
-run = "mkdir -p build/template && typst compile --root . template/main-minimal.typ build/template/main-minimal.pdf"
+if [ ! -f "$SRC" ]; then
+  echo "Source file not found: $SRC"
+  exit 1
+fi
 
-[tasks.discord-bot]
-description = "Compile the Discord Bot workshop deck"
-run = "mkdir -p build/discord-bot && typst compile --root . discord-bot/discord-bot.typ build/discord-bot/discord-bot.pdf"
-
-[tasks.check]
-description = "Compile all decks that should stay healthy"
-depends = ["template", "template-minimal", "discord-bot"]
-
-[tasks.clean]
-description = "Remove generated PDFs"
-run = "rm -rf build"
+mkdir -p "build/$TARGET"
+typst compile --root . "$SRC" "$OUT"
+'''
