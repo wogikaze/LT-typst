@@ -64,15 +64,30 @@
 }
 
 // Atomic Design: Organisms
-#let title-pattern(title, subtitle, author) = align(left + horizon)[
-  #headline(title, size: sizes.display)
-  #v(space.sm)
-  #box(width: limits.text_max_width, prose(subtitle, muted: true, size: sizes.subheading))
-  #v(space.lg)
-  #line(length: 100%, stroke: (paint: theme.accent, thickness: 1.2pt))
-  #v(space.md)
-  #caption(author)
-]
+#let title-pattern(title, subtitle, author, aside: none) = {
+  let main = [
+    #headline(title, size: sizes.display)
+    #v(space.sm)
+    #box(width: limits.text_max_width, prose(subtitle, muted: true, size: sizes.subheading))
+    #v(space.lg)
+    #line(length: 100%, stroke: (paint: theme.accent, thickness: 1.2pt))
+    #v(space.md)
+    #caption(author)
+  ]
+  if aside == none {
+    align(left + horizon, main)
+  } else {
+    align(horizon)[
+      #grid(
+        columns: (1fr, auto),
+        column-gutter: space.xl,
+        align: horizon,
+        align(left, main),
+        align(right, aside),
+      )
+    ]
+  }
+}
 
 #let section-pattern(title, body) = align(center + horizon)[
   #headline(title, size: sizes.hero)

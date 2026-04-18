@@ -8,7 +8,8 @@
   title-pattern(
     [Discord Bot 講習会],
     [0から動くBotを一緒に作ろう],
-    [wogikaze],
+    [広島大学コンピュータサークル HiCoder​],
+    aside: image("assets/logo-1.png", width: 140pt, fit: "contain"),
   ),
   section-pattern(
     [この講習のゴール],
