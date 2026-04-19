@@ -248,7 +248,7 @@
 #let steps-pattern(
   title,
   steps,
-  subtitle: [番号付きで順序を明示する。],
+  subtitle: [],
 ) = {
   // 4 件以上はカード＋矢印の積みでタイトル領域を差し引くと溢れやすいので詰める
   let n = steps.len()

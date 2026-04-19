@@ -280,7 +280,8 @@
   slide-frame(
     align(center)[
       #box(width: 100%, clip: true)[
-        #image("assets/shell-0.png", width: 100%, height: 380pt, fit: "contain")
+        #image("/assets/image-5.png", width: 100%, height: 380pt, 
+        fit: "contain")
       ]
     ],
     title: [git clone と開発環境の準備],
@@ -290,7 +291,7 @@
     [起動までの確認],
     (
       ([.env を用意する], [.env-example を .env にコピーし、`BOT_TOKEN=` の行にトークンを貼る]),
-      ([Python で起動する], [ターミナルで `python main.py` を実行し、エラーなく起動することを確認する]),
+      ([Python で起動する], [ターミナルで `uv run python main.py` を実行し、エラーなく起動することを確認する]),
       ([Discord で状態を見る], [Discord をリロードし、Bot がオンラインになっていることを確認する]),
       ([スラッシュコマンドで疎通する], [`/hello` を送り、Bot が反応することを確認する]),
     ),
