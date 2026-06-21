@@ -1,17 +1,23 @@
 # typst-template
 
-Touying + Metropolis ベースの Typst テンプレートです。AIエージェントと共同でスライドを育てる前提で、スタイルガイド、レイアウトパターン、`.agents` のスキル、`mise` タスクを同梱しています。
+Atomic Design で部品化した **16:9 講習会スライド**用 Typst テンプレートです。AI エージェントと共同でスライドを育てる前提で、スタイルガイド、レイアウトパターン、`.agents` のスキル、`mise` タスクを同梱しています。
+
+> 実装は **純 Typst 自前テーマ**です（Touying / Metropolis は import していません）。テンプレートの現状整理は [docs/template-overview.md](docs/template-overview.md) を参照してください。
 
 ## ファイル構成
 
-- `_template/`: 新しいスライドにコピーして使う雛形
-- `_template/_template.typ`: テンプレートのエントリポイント
-- `_template/style.typ`: 色、余白、タイポグラフィのトークン
-- `_template/components.typ`: パネル、統計表示、リンクなどの部品
-- `_template/layouts.typ`: 比較、3カード、セクション開始などのレイアウト
-- `discord-bot/`: Discord Bot 講習会用のスライド
+- `template/`: デザインシステム本体（部品・トークン・パターンカタログ）
+  - `style.typ`: 色、余白、タイポグラフィのトークン
+  - `components.typ`: パネル、統計表示、リンクなどの部品
+  - `layouts.typ`: 比較、3カード、セクション開始などのレイアウト
+  - `main.typ`: 全レイアウトのカタログ
+  - `main-minimal.typ`: よく使うパターンだけの最小例
+- `_template/`: 新しいスライドにコピーして使う薄いエントリ（`template/` を import）
+- `discord-bot/`: Discord Bot 講習会用のスライド（実例）
 - `mise.toml`: ルート用のビルド・監視・検証タスク
 - `.agents/`: エージェント向けのスキル、プロンプト、参照メモ
+- `docs/template-overview.md`: テンプレート現状の概要（部品一覧・制約・既知のギャップ）
+- `docs/slide-recipes.md`: 中間層 Recipes（自由度と覚えやすさのバランス）
 - `docs/style-guide.md`: スライドデザインの判断基準
 
 ## 前提
@@ -35,9 +41,10 @@ mise trust
 
 ```bash
 mise run build _template
+# または template カタログ: cd template && mise run build
 ```
 
-出力先は `build/_template/_template.pdf` です。
+出力先は `build/_template/_template.pdf`（または `template/build/main.pdf`）です。
 
 別の資料をビルドする場合は、ディレクトリ名を引数に渡します。
 
@@ -101,14 +108,14 @@ Qiita記事「AIエージェントと協働してmarpでスライドを作る202
 
 1. デザインの意図は `.agents/skills/impeccable`・`layout` など（一覧は `.agents/skills/README.md`）を主とする
 2. `docs/style-guide.md` でデザイン判断を言語化する
-3. `_template/_template.typ` と `_template/layouts.typ` の既存パターンを優先する
+3. `template/main.typ` と `template/layouts.typ` の既存パターンを優先する
 4. Typst への落とし込み・ビルド確認・SVG は `typst-style` / `typst-layout-check` / `typst-svg` で補う
 5. 見た目の確認は `mise run check` で PDF を生成してから行う
 
 エージェントに依頼する例（デザイン主 → 実装従）:
 
 ```text
-まず .agents/skills/layout でスライドの余白と階層を整理し、そのあと .agents/skills/typst-style で _template と docs/style-guide.md に沿って直して
+まず .agents/skills/layout でスライドの余白と階層を整理し、そのあと .agents/skills/typst-style で template/ と docs/style-guide.md に沿って直して
 ```
 
 ```text
@@ -132,7 +139,7 @@ Qiita記事「AIエージェントと協働してmarpでスライドを作る202
 
 ## 注意
 
-- `link_url` は `#link_url("URL", "表示名")` の形で呼びます。
-- `@preview/touying` の初回取得にはネットワーク接続が必要です。
+- 外部リンクは `#link-url("URL", [表示名])` の形で呼びます（`components.typ`）。
+- テンプレートの詳細・既知のギャップは [docs/template-overview.md](docs/template-overview.md) を参照してください。
 - 生成物は `build/` に出力され、Git 管理から除外されます。
 - `mise run build` や `mise run watch` は、対象ディレクトリ名を引数に取る前提です。

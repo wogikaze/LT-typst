@@ -1,4 +1,4 @@
-#import "style.typ": fonts, limits, panel-inset, radius, sizes, space, theme, tracking
+#import "style.typ": fonts, grid-card-inset, limits, panel-inset, radius, sizes, space, theme, tracking
 
 // デッキ右下のスライド番号（deck が重ねる）
 #let slide-no-footer(n, total) = text(
@@ -100,11 +100,15 @@
 )
 
 // Atomic Design: Molecules
-#let bullet-list(items) = list(
-  tight: false,
-  spacing: space.md,
+#let bullet-list(items, compact: false) = list(
+  tight: compact,
+  spacing: if compact { space.sm } else { space.md },
+  indent: 0pt,
+  body-indent: if compact { 0.35em } else { 0.45em },
   ..items,
 )
+
+#let compact-list(items) = bullet-list(items, compact: true)
 
 #let tone-stroke(tone) = if tone == "accent" {
   theme.accent
@@ -156,51 +160,105 @@
   )
 }
 
+#let card-content(
+  title,
+  body,
+  footer: none,
+  title-height: limits.card_title_height,
+  body-height: none,
+  title-gap: space.xs,
+) = [
+  #bounded(headline(title, size: sizes.subheading), height: title-height)
+  #v(title-gap)
+  #bounded(body, height: body-height)
+  #if footer != none [
+    #v(space.sm)
+    #divider()
+    #v(space.xs)
+    #caption(footer)
+  ]
+]
+
+#let card-stroke(tone) = (
+  paint: tone-stroke(tone),
+  thickness: if tone == "default" { 0.8pt } else { 1.1pt },
+)
+
 #let card(
   title,
   body,
   tone: "default",
   footer: none,
   height: none,
+  inset: panel-inset,
   title-height: limits.card_title_height,
   body-height: none,
 ) = {
-  let stroke-paint = tone-stroke(tone)
   let fill-paint = tone-fill(tone)
-  let content = [
-    #bounded(headline(title, size: sizes.subheading), height: title-height)
-    #v(space.xs)
-    #bounded(body, height: body-height)
-    #if footer != none [
-      #v(space.sm)
-      #divider()
-      #v(space.xs)
-      #caption(footer)
-    ]
-  ]
+  let content = card-content(title, body, footer: footer, title-height: title-height, body-height: body-height)
+  let frame = box(
+    width: 100%,
+    fill: fill-paint,
+    stroke: card-stroke(tone),
+    radius: radius,
+    inset: inset,
+    [#content],
+  )
 
   if height == none {
-    box(
-      width: 100%,
-      fill: fill-paint,
-      stroke: (paint: stroke-paint, thickness: if tone == "default" { 0.8pt } else { 1.1pt }),
-      radius: radius,
-      inset: panel-inset,
-      content,
-    )
+    frame
   } else {
     box(
       width: 100%,
       height: height,
       clip: true,
-      fill: fill-paint,
-      stroke: (paint: stroke-paint, thickness: if tone == "default" { 0.8pt } else { 1.1pt }),
-      radius: radius,
-      inset: panel-inset,
-      content,
+      frame,
     )
   }
 }
+
+// table 行内で背景まで揃える。cards-slide / grid-cards が描画する
+#let table-card-cell(
+  title,
+  body,
+  tone: "default",
+  footer: none,
+  title-height: limits.card_title_height,
+  body-height: none,
+) = {
+  table.cell(
+    align: top,
+    fill: tone-fill(tone),
+    stroke: card-stroke(tone),
+    inset: grid-card-inset,
+  )[
+    #show list: set list(
+      tight: true,
+      spacing: space.sm,
+      indent: 0pt,
+      body-indent: 0.35em,
+    )
+    #card-content(
+      title,
+      body,
+      footer: footer,
+      title-height: title-height,
+      body-height: body-height,
+      title-gap: 2pt,
+    )
+  ]
+}
+
+// cards-slide 用の仕様。直接描画せず table-card-cell に渡す
+#let stretchcard(title, body, tone: "default", footer: none, title-height: limits.card_title_height, body-height: none) = (
+  kind: "card-spec",
+  title: title,
+  body: body,
+  tone: tone,
+  footer: footer,
+  title-height: title-height,
+  body-height: body-height,
+)
 
 #let flat-card(title, body, fill: theme.surface, stroke: theme.border, height: none) = {
   let content = [
@@ -427,6 +485,36 @@
   clip: true,
   [#image]
 )
+
+#let profile-bullet(body) = grid(
+  columns: (10pt, 1fr),
+  column-gutter: space.md,
+  align: horizon,
+  box(
+    width: 7pt,
+    height: 7pt,
+    radius: 999pt,
+    fill: theme.info,
+  ),
+  box(width: 100%, align(left + horizon, body)),
+)
+
+#let profile-highlight(body, fill: rgb("#F3D6D6")) = box(
+  fill: fill,
+  inset: (x: 3pt, y: 1pt),
+  radius: 2pt,
+  body,
+)
+
+#let screenshot(path, height: 360pt, fit: "contain", inset: 10pt) = box(
+  width: 100%,
+  stroke: (paint: theme.border, thickness: 0.8pt),
+  radius: radius,
+  inset: inset,
+  clip: true,
+)[
+  #image(path, width: 100%, height: height, fit: fit)
+]
 
 #let image-card(
   title,

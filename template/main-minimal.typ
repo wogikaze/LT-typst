@@ -4,7 +4,8 @@
 
 #show: apply-theme
 
-// 全パターンではなく、よく使う導線だけを並べた最小デッキ（講義・Fork 用）
+// よく使う導線: Patterns（定番） + Recipes（件数可変）の混在例
+// Recipes の詳細: docs/slide-recipes.md
 #deck((
   title-pattern(
     [講習タイトル],
@@ -28,13 +29,27 @@
       [新しい点2],
     ),
   ),
-  steps-pattern(
+  cards-slide(
+    [3つの観点],
+    (
+      stretchcard([観点A], [#compact-list(([要点1], [要点2]))]),
+      stretchcard([観点B], [#compact-list(([要点1], [要点2]))], tone: "accent"),
+      stretchcard([観点C], [#compact-list(([要点1], [要点2]))], tone: "info"),
+    ),
+    subtitle: [card-row-pattern の代わりに列数自動],
+  ),
+  steps-slide(
     [手順],
     (
       ([Step 1], [最初にやること]),
       ([Step 2], [次にやること]),
       ([Step 3], [最後に確認すること]),
     ),
+  ),
+  list-slide(
+    [今日の持ち物],
+    ([PC], [Discord アカウント], [メモ用紙]),
+    subtitle: [箇条書きだけのスライド],
   ),
   closing-pattern(
     [おわりに],

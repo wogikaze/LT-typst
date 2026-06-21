@@ -9,28 +9,15 @@ description = "Build a Typst deck by directory name"
 usage = '''
 arg "<target>" help="Deck directory name"
 '''
-run = '''
-set -eu
-
-TARGET="{{usage.target}}"
-TARGET="${TARGET%/}"
-
-SRC="$TARGET/$TARGET.typ"
-OUT="build/$TARGET/$TARGET.pdf"
-
-if [ ! -f "$SRC" ]; then
-  echo "Source file not found: $SRC"
-  exit 1
-fi
-
-mkdir -p "build/$TARGET"
-typst compile --root . "$SRC" "$OUT"
-'''
+run = "bash scripts/build.sh {{usage.target}}"
+run_windows = "pwsh -NoProfile -File scripts/build.ps1 {{usage.target}}"
 
 [tasks.check]
 description = "Compile all decks that should stay healthy"
-depends = ["build"]
+run = "bash scripts/check.sh"
+run_windows = "pwsh -NoProfile -File scripts/check.ps1"
 
 [tasks.clean]
 description = "Remove generated PDFs"
 run = "rm -rf build"
+run_windows = "pwsh -NoProfile -Command \"Remove-Item -Recurse -Force build -ErrorAction SilentlyContinue\""
