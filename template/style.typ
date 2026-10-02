@@ -79,6 +79,8 @@
 
 #let radius = 4pt
 #let panel-inset = 16pt
+// cards-slide の table cell 用。panel-inset より狭く、右も少し詰める
+#let grid-card-inset = (left: 8pt, right: 5pt, top: 8pt, bottom: 8pt)
 #let page-width = 13.333in
 #let page-height = 7.5in
 // apply-theme の set page(margin) と同一。全面レイアウトでマージン分だけ place をずらすときに使う

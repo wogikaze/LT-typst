@@ -1,5 +1,5 @@
 #import "style.typ": (
-  colors, fonts, limits, page-height, page-margin-x, page-margin-y, page-width, panel-inset, radius, sizes, space,
+  colors, fonts, grid-card-inset, limits, page-height, page-margin-x, page-margin-y, page-width, panel-inset, radius, sizes, space,
   theme, tracking,
 )
 #import "components.typ": *
@@ -32,7 +32,7 @@
     #if subtitle != none and subtitle != [] [#v(space.xs)#prose(subtitle, muted: true)]
     #v(space.lg)
   ]
-  #body
+  #box(width: 100%, align(top)[#body])
 ]
 
 #let grid-columns(cols) = if cols == 1 {
@@ -47,21 +47,205 @@
   (1fr, 1fr, 1fr)
 }
 
-#let grid-cards(cards, cols: 3, gap: space.lg, cell-height: none) = {
-  let cells = if cell-height == none {
-    cards
-  } else {
-    cards.map(card => box(width: 100%, height: cell-height, clip: true, card))
-  }
+#let is-card-spec(c) = type(c) == dictionary and "kind" in c and c.kind == "card-spec"
 
-  grid(
-    columns: grid-columns(cols),
-    column-gutter: gap,
-    row-gutter: space.md,
-    align: top,
-    ..cells,
+#let grid-card-cell(c, cell-height: none) = {
+  if is-card-spec(c) {
+    if cell-height != none {
+      table.cell(align: top)[
+        #card(
+          c.title,
+          c.body,
+          tone: c.tone,
+          footer: c.footer,
+          height: cell-height,
+          inset: grid-card-inset,
+          title-height: c.title-height,
+          body-height: c.body-height,
+        )
+      ]
+    } else {
+      table-card-cell(
+        c.title,
+        c.body,
+        tone: c.tone,
+        footer: c.footer,
+        title-height: c.title-height,
+        body-height: c.body-height,
+      )
+    }
+  } else if cell-height != none {
+    table.cell(align: top)[
+      #box(width: 100%, height: cell-height, clip: true, align(top)[#c])
+    ]
+  } else {
+    table.cell(align: top)[#c]
+  }
+}
+
+#let grid-cards(cards, cols: 3, gap: space.md, cell-height: none) = {
+  box(width: 100%, align(top)[
+    #if cell-height != none {
+      grid(
+        columns: grid-columns(cols),
+        column-gutter: gap,
+        row-gutter: space.md,
+        ..cards.map(c => box(
+          width: 100%,
+          height: cell-height,
+          clip: true,
+          align(top)[#if is-card-spec(c) {
+            card(
+              c.title,
+              c.body,
+              tone: c.tone,
+              footer: c.footer,
+              height: cell-height,
+              inset: grid-card-inset,
+              title-height: c.title-height,
+              body-height: c.body-height,
+            )
+          } else {
+            c
+          }],
+        )),
+      )
+    } else {
+      // table は行高を最長セルに合わせ、短いセルは cell の fill で背景を伸ばす
+      table(
+        columns: grid-columns(cols),
+        column-gutter: gap,
+        stroke: none,
+        inset: 0pt,
+        fill: none,
+        ..cards.map(c => grid-card-cell(c)),
+      )
+    }
+  ])
+}
+
+#let auto-cols(count) = if count <= 1 {
+  1
+} else if count == 2 {
+  2
+} else if count == 4 {
+  2
+} else if count == 5 {
+  5
+} else if count == 6 {
+  3
+} else {
+  calc.min(count, 3)
+}
+
+// Recipes — 固定件数パターンと slide-frame 直書きの中間層
+// 件数は可変。覚える API は少数に絞る
+
+#let content-slide(title, body, subtitle: none) = slide-frame(body, title: title, subtitle: subtitle)
+
+#let list-slide(title, items, subtitle: none, card-title: none) = slide-frame(
+  if card-title == none {
+    bullet-list(items)
+  } else {
+    card(card-title, bullet-list(items))
+  },
+  title: title,
+  subtitle: subtitle,
+)
+
+#let columns-slide(
+  title,
+  cells,
+  cols: none,
+  subtitle: none,
+  gap: space.md,
+  cell-height: none,
+) = {
+  let n = if cols == none { auto-cols(cells.len()) } else { cols }
+  slide-frame(
+    grid-cards(cells, cols: n, gap: gap, cell-height: cell-height),
+    title: title,
+    subtitle: subtitle,
   )
 }
+
+#let cards-slide(
+  title,
+  cards,
+  cols: none,
+  subtitle: none,
+  cell-height: auto,
+) = columns-slide(
+  title,
+  cards,
+  cols: cols,
+  subtitle: subtitle,
+  cell-height: if cell-height == auto { none } else { cell-height },
+)
+
+#let figure-slide(
+  title,
+  visual,
+  subtitle: none,
+  caption: none,
+  height: 360pt,
+  fit: "contain",
+  align-dir: center,
+) = slide-frame(
+  [
+    #align(align-dir)[
+      #if type(visual) == str {
+        screenshot(visual, height: height, fit: fit)
+      } else {
+        visual
+      }
+    ]
+    #if caption != none [
+      #v(space.sm)
+      #caption(caption)
+    ]
+  ],
+  title: title,
+  subtitle: subtitle,
+)
+
+#let figures-slide(
+  title,
+  visuals,
+  subtitle: none,
+  cols: none,
+  height: 200pt,
+  fit: "contain",
+) = {
+  let cells = visuals.map(v => if type(v) == str {
+    screenshot(v, height: height, fit: fit)
+  } else {
+    v
+  })
+  columns-slide(title, cells, cols: cols, subtitle: subtitle)
+}
+
+#let stack-slide(title, blocks, subtitle: none, gap: space.md) = slide-frame(
+  [
+    #for (idx, block) in blocks.enumerate() [
+      #block
+      #if idx < blocks.len() - 1 [#v(gap)]
+    ]
+  ],
+  title: title,
+  subtitle: subtitle,
+)
+
+#let callouts-slide(title, items, subtitle: none) = slide-frame(
+  [
+    #for (idx, item) in items.enumerate() [
+      #callout(item.at(0), item.at(1), kind: if item.len() >= 3 { item.at(2) } else { "info" })
+      #if idx < items.len() - 1 [#v(space.sm)]
+    ]
+  ],
+  title: title,
+  subtitle: subtitle,
+)
 
 // Atomic Design: Organisms
 #let title-pattern(title, subtitle, author, aside: none) = {
@@ -158,20 +342,42 @@
   right-items,
   right-tone: "success",
   subtitle: [],
-) = slide-frame(
-  // 固定 height / body-height / cell-height は本文より箱だけ大きくなりカード下に空白が残る。
-  // 行の高さは grid が両セルの内容の最大に取る（上揃え）。
-  grid-cards(
+  visual: none,
+  visual-height: 360pt,
+) = {
+  let cards = grid-cards(
     (
-      card(left-title, bullet-list(left-items), tone: left-tone),
-      card(right-title, bullet-list(right-items), tone: right-tone),
+      stretchcard(left-title, compact-list(left-items), tone: left-tone),
+      stretchcard(right-title, compact-list(right-items), tone: right-tone),
     ),
     cols: 2,
     cell-height: none,
-  ),
-  title: title,
-  subtitle: subtitle,
-)
+  )
+  let figure = if visual != none {
+    align(center)[
+      #if type(visual) == str {
+        image(visual, height: visual-height)
+      } else {
+        visual
+      }
+    ]
+  } else {
+    none
+  }
+  slide-frame(
+    if figure == none {
+      cards
+    } else {
+      [
+        #cards
+        #v(space.sm)
+        #figure
+      ]
+    },
+    title: title,
+    subtitle: subtitle,
+  )
+}
 
 #let text-image-pattern(
   title,
@@ -217,9 +423,7 @@
 }
 
 #let card-row-pattern(title, cards, cols: 3, subtitle: none, cell-height: auto) = slide-frame(
-  grid-cards(cards, cols: cols, cell-height: if cell-height == auto {
-    if cols == 4 { limits.card_height_sm } else if cols == 2 { limits.card_height_lg } else { limits.card_height_md }
-  } else { cell-height }),
+  grid-cards(cards, cols: cols, cell-height: if cell-height == auto { none } else { cell-height }),
   title: title,
   subtitle: subtitle,
 )
@@ -592,7 +796,7 @@
 ) = slide-frame(
   [
     #for (idx, item) in items.enumerate() [
-      #callout([まとめポイント #str(idx + 1)], item, kind: "success")
+      #callout([#str(idx + 1))], item, kind: "success")
       #if idx < items.len() - 1 [#v(space.sm)]
     ]
   ],
@@ -642,3 +846,110 @@
   title: title,
   subtitle: subtitle,
 )
+
+#let steps-slide(
+  title,
+  steps,
+  subtitle: none,
+  horizontal: false,
+) = if horizontal {
+  let n = steps.len()
+  let col-spec = ()
+  let cells = ()
+  for (idx, step) in steps.enumerate() {
+    let label = if type(step) == array { step.at(0) } else { [Step #str(idx + 1)] }
+    let body = if type(step) == array { step.at(1) } else { step }
+    let tone = if idx == n - 1 { "accent" } else { "default" }
+    col-spec.push(1fr)
+    cells.push(card(label, body, tone: tone, height: limits.card_height_sm, title-height: 34pt))
+    if idx < n - 1 {
+      col-spec.push(20pt)
+      cells.push(flow-arrow(direction: "right"))
+    }
+  }
+  slide-frame(
+    grid(
+      columns: col-spec,
+      column-gutter: space.xs,
+      align: horizon,
+      ..cells,
+    ),
+    title: title,
+    subtitle: subtitle,
+  )
+} else {
+  steps-pattern(title, steps, subtitle: subtitle)
+}
+
+// 自己紹介（左テキスト + 右写真）。
+#let profile-slide(
+  name,
+  items,
+  photo: none,
+  logo: none,
+  footer: none,
+  placeholder: none,
+  photo-size: 220pt,
+) = block(
+  width: 100%,
+  height: 100%,
+  breakable: false,
+)[
+  #place(top + left, dx: -page-margin-x, dy: -page-margin-y)[
+    #box(width: page-width, height: page-height)[
+      #grid(
+        columns: (1.55fr, 1fr),
+        gutter: 0pt,
+        box(width: 100%, height: 100%, fill: rgb("#FFFFFF"), inset: (x: 56pt, y: 44pt))[
+          #if logo != none [
+            #logo
+            #v(space.xl)
+          ]
+          #headline(name, size: 52pt)
+          #v(space.xl)
+          #for (idx, item) in items.enumerate() [
+            #profile-bullet(item)
+            #if idx < items.len() - 1 [#v(space.lg)]
+          ]
+          #if footer != none [
+            #v(1fr)
+            #place(bottom + left, dy: -8pt)[
+              #caption(footer)
+            ]
+          ]
+        ],
+        box(width: 100%, height: 100%, fill: theme.primary)[
+          #align(center + horizon)[
+            #box(
+              width: photo-size,
+              height: photo-size,
+              radius: 999pt,
+              clip: true,
+              stroke: (paint: rgb("#FFFFFF"), thickness: 4pt),
+              if photo != none {
+                image(photo, width: 100%, height: 100%, fit: "cover")
+              } else if placeholder != none {
+                box(
+                  width: 100%,
+                  height: 100%,
+                  fill: theme.primary_hover,
+                  align(center + horizon, placeholder),
+                )
+              } else {
+                box(
+                  width: 100%,
+                  height: 100%,
+                  fill: theme.primary_hover,
+                  align(
+                    center + horizon,
+                    text(font: fonts.heading, size: 56pt, fill: theme.text_on_dark, weight: 700, [?]),
+                  ),
+                )
+              },
+            )
+          ]
+        ],
+      )
+    ]
+  ]
+]

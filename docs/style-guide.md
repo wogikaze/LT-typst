@@ -1,6 +1,6 @@
 # Typst Slide Design System
 
-**色・サイズ・余白の数値の正（単一ソース）は `template/style.typ`** の `colors` / `theme` / `sizes` / `limits` である。本書と `DESIGN.md` はその説明用。
+**色・サイズ・余白の数値の正（単一ソース）は `template/style.typ`** の `colors` / `theme` / `sizes` / `limits` である。本書と `DESIGN.md` はその説明用。テンプレート全体の現状整理（部品一覧・アーキテクチャ・既知のギャップ）は [template-overview.md](./template-overview.md) を参照。
 
 このテンプレートは「自由に飾るための部品集」ではなく、講習会スライドを壊れにくく作るための設計システムです。新規スライドは `template/style.typ` のトークン、`template/components.typ` の部品、`template/layouts.typ` のレイアウト関数を優先して組みます。
 
