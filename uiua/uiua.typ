@@ -12,7 +12,7 @@
   ),
   question-pattern(
     [まずはコードの例を見てみよう],
-    [一瞬で奇妙さがわかる],
+    [見れば奇妙さがわかる],
   ),
   slide-frame(
     title: [何をするコードでしょうか？],
@@ -38,7 +38,7 @@
     [
       Uiuaは記号まみれの言語で、コードを見ても何をしているのか分かりにくい
       #v(space.md)
-      まずはシンプルなコードで説明する
+      シンプルなコードで説明する
       #v(space.md)
       #image("assets/2.png", width: 100%)
     ],
@@ -48,7 +48,7 @@
     [
       Uiuaは記号まみれの言語で、コードを見ても何をしているのか分かりにくい
       #v(space.md)
-      まずはシンプルなコードで説明する
+      シンプルなコードで説明する
       #v(space.md)
       #image("assets/2.png", width: 100%)
 
@@ -68,7 +68,7 @@
     [
       #image("assets/3.png", width: 100%)
       #v(space.md)
-      戻しすぎ!!
+      ちょっと戻しすぎ!!
     ],
     title: [奇妙さ その1 - 記号まみれ],
   ),
@@ -76,7 +76,8 @@
     [
       #image("assets/3.png", width: 100%)
       #v(space.md)
-      戻しすぎ!!
+      ちょっと戻しすぎ!!
+      #v(space.md)
       #image("/assets/image-4.png", width: 50%)
       #v(space.md)
       ↑MN-Coreのアセンブリを思い出した
@@ -114,11 +115,11 @@
     [この言語は実用できるのか？],
   ),
   card-row-pattern(
-    [Uiuaの便利そうな点],
+    [Uiuaの便利"そうな"点],
     (
-      card([シンプル], [#bullet-list(([配列中心], [webで実行できる], [language server]))], tone: "primary"),
+      card([シンプルな機能], [#bullet-list(([配列中心], [webで実行できる], [language server]))], tone: "primary"),
       card([簡単な音声/画像出力], [#bullet-list(([processing的な], [オーディオ], [`Bad Apple`]))], tone: "accent"),
-      card([使う], [#bullet-list(([Crate.ioにある], [AtCoderで使える]))], tone: "info"),
+      card([実際に使う], [#bullet-list(([Crate.ioにある], [AtCoderで使える]))], tone: "info"),
       image("/assets/image-1.png", height: 50%),
     ),
     cols: 3,
@@ -133,11 +134,11 @@
     ])],
     title: [Uiuaの便利そうな点],
   ),
-  qa-pattern((
-    ([変数は?], [`var ← 1`で使える]),
-    ([ライブラリやモジュール], [`~ "git: url/path"` でサポート]),
-    ([デバッグは?], [debug print: `##` debug: `?`]),
-  )),
+  // qa-pattern((
+  //   ([変数は?], [`var ← 1`で使える]),
+  //   ([ライブラリやモジュール], [`~ "git: url/path"` でサポート]),
+  //   ([デバッグは?], [debug print: `##` debug: `?`]),
+  // )),
   slide-frame(
     image("/assets/image-3.png", width: 100%),
     title: [デバッグの例],
@@ -163,6 +164,6 @@
       人工言語のToki Ponaの生みの親さんがデザインしたキャラクター
     ],
     col-ratio: (5fr, 3fr),
-    subtitle: [奇妙にも見えるが、ネタ言語ではなく実用できる言語],
+    subtitle: [奇妙に見えるが、ネタ言語ではなく実用でき"は"する言語],
   ),
 ))
